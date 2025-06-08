@@ -1,3 +1,5 @@
 # dotfiles
 
-`$ make init`
+```sh
+make init
+```
