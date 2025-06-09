@@ -4,13 +4,18 @@ all:
 delete:
 	stow --verbose --target=$$HOME --delete */
 
-init:
-	rm -rf $HOME/.bashrc
-	rm -rf $HOME/.zshrc
-	rm -rf $HOME/.gdbinit
-	rm -rf $HOME/.config/fish/
-	rm -rf $HOME/.config/foot/
-	rm -rf $HOME/.config/nvim/
-	rm -rf $HOME/.config/sway/
-	rm -rf $HOME/.config/tmux/
-	stow --verbose --target=$$HOME */
+fish:
+	stow --verbose=2 --target=$$Home --restow fish
+
+tmux:
+	stow --verbose=2 --target=$$Home --restow tmux
+
+adopt_all:
+	stow --verbose=2 --target=$$HOME --adopt -S bash
+	stow --verbose=2 --target=$$HOME --adopt -S zsh
+	stow --verbose=2 --target=$$HOME --adopt -S gdb
+	stow --verbose=2 --target=$$HOME --adopt -S fish
+	stow --verbose=2 --target=$$HOME --adopt -S foot
+	stow --verbose=2 --target=$$HOME --adopt -S sway
+	stow --verbose=2 --target=$$HOME --adopt -S tmux
+	git --rest hard
