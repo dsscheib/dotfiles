@@ -11,11 +11,7 @@ tmux:
 	stow --verbose=2 --target=$$Home --restow tmux
 
 adopt_all:
-	stow --verbose=2 --target=$$HOME --adopt -S bash
 	stow --verbose=2 --target=$$HOME --adopt -S zsh
-	stow --verbose=2 --target=$$HOME --adopt -S gdb
 	stow --verbose=2 --target=$$HOME --adopt -S fish
-	stow --verbose=2 --target=$$HOME --adopt -S foot
-	stow --verbose=2 --target=$$HOME --adopt -S sway
 	stow --verbose=2 --target=$$HOME --adopt -S tmux
 	git --rest hard
