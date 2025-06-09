@@ -3,3 +3,4 @@ if status is-interactive
 end
 # theme_gruvbox dark medium
 starship preset nerd-font-symbols -o ~/.config/starship.toml
+starship init fish | source
