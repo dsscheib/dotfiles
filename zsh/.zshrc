@@ -44,4 +44,4 @@ fi
 fpath+=~/.zfunc
 
 # Startup greetings
-neofetch
+fastfetch
