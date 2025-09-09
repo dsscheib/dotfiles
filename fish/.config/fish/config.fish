@@ -11,6 +11,3 @@ if status is-interactive
   __fish_complete_django django-admin.py
   __fish_complete_django manage.py
 end
-
-eval "$(rbenv init -)"
-
