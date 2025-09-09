@@ -7,7 +7,7 @@ if status is-interactive
   # starship preset tokyo-night -o ~/.config/starship.toml
   starship init fish | source
 
-  # Djengo completions
+  # Django completions
   __fish_complete_django django-admin.py
   __fish_complete_django manage.py
 end
