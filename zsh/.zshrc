@@ -43,5 +43,9 @@ fi
 
 fpath+=~/.zfunc
 
+# ~/.zshrc
+
+eval "$(starship init zsh)"
+
 # Startup greetings
 fastfetch
