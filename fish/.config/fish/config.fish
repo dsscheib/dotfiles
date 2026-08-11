@@ -10,4 +10,8 @@ if status is-interactive
   # Django completions
   __fish_complete_django django-admin.py
   __fish_complete_django manage.py
+
+  # Make neovim the default pager for man pages
+  # set -gx MANPAGER "nvim -c 'set ft=man' -"
+  set -gx MANPAGER "nvim +Man!"
 end
