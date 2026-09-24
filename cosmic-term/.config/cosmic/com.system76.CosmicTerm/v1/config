@@ -1,7 +1,7 @@
 (
     // Font configuration
     font_header: (
-        family: "JetBrains Mono Nerd Font",
+        family: "JetBrainsMono Nerd Font",
         weight: Normal,
         stretch: Normal,
         style: Normal,
