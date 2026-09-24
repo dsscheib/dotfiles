@@ -1,6 +1,6 @@
 # ==============================================================================
-# ML4W-INSPIRED ZSH CONFIGURATION (Tailored for Pop!_OS 24.04)
-# Save this file to ~/.zshrc
+# ML4W-INSPIRED ZSH CONFIGURATION (Pop!_OS 24.04 Target)
+# Save to: ~/.zshrc
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -12,7 +12,13 @@ export PAGER="less"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
-# Deduplicate and append essential paths (Cargo, Go, Flatpak, local bin)
+# Use Neovim as default man page pager
+if command -v nvim &> /dev/null; then
+  export MANPAGER="nvim +Man!"
+  export MANWIDTH=999
+fi
+
+# Deduplicate and append essential paths
 typeset -U path
 path=(
   "$HOME/bin"
@@ -24,15 +30,6 @@ path=(
   $path
 )
 export PATH
-
-# Less formatting for colored man pages
-export LESS_TERMCAP_mb=$'\e[1;31m'
-export LESS_TERMCAP_md=$'\e[1;36m'
-export LESS_TERMCAP_me=$'\e[0m'
-export LESS_TERMCAP_se=$'\e[0m'
-export LESS_TERMCAP_so=$'\e[01;33m'
-export LESS_TERMCAP_ue=$'\e[0m'
-export LESS_TERMCAP_us=$'\e[1;32m'
 
 # ------------------------------------------------------------------------------
 # 2. ZSH OPTIONS & HISTORY
@@ -65,75 +62,55 @@ setopt INTERACTIVE_COMMENTS   # Allow inline comments (#) in interactive shell
 # 3. COMPLETION SYSTEM
 # ------------------------------------------------------------------------------
 autoload -Uz compinit
-# Cache completions for fast startup
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "$HOME/.cache/zsh/zcompcache"
 compinit -d "$HOME/.cache/zsh/zcompdump"
 
-# Case-insensitive, partial-word, and substring completion
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-
-# Interactive selection menu
 zstyle ':completion:*' menu select
-
-# Colorize completions using system LS_COLORS
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
-
-# Group completion results with clear headers
 zstyle ':completion:*:*:*:*:descriptions' format '%F{cyan}-- %d --%f'
 zstyle ':completion:*:*:*:*:warnings' format '%F{red}-- No matches found --%f'
 
 # ------------------------------------------------------------------------------
-# 4. KEYBINDINGS (Emacs mode with history search)
+# 4. KEYBINDINGS (Vi Mode Enabled)
 # ------------------------------------------------------------------------------
-bindkey -e
+bindkey -v # Enable Vi keybindings
+export KEYTIMEOUT=1 # Make switching between insert and normal mode instant
 
-# Home / End navigation fixes across terminals
-bindkey '^[[H' beginning-of-line
-bindkey '^[[F' end-of-line
-bindkey '^[[1~' beginning-of-line
-bindkey '^[[4~' end-of-line
-
-# Delete key fix
-bindkey '^[[3~' delete-char
-
-# Ctrl + Left/Right word jumps
-bindkey '^[[1;5C' forward-word
-bindkey '^[[1;5D' backward-word
-
-# History search using Up/Down arrows matching current line buffer
+# Maintain arrow key history searching in both Vi Insert & Normal modes
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
-bindkey '^[[A' up-line-or-beginning-search
-bindkey '^[[B' down-line-or-beginning-search
+
+bindkey -M viins '^[[A' up-line-or-beginning-search
+bindkey -M viins '^[[B' down-line-or-beginning-search
+bindkey -M vicmd '^[[A' up-line-or-beginning-search
+bindkey -M vicmd '^[[B' down-line-or-beginning-search
+bindkey -M vicmd 'k' up-line-or-beginning-search
+bindkey -M vicmd 'j' down-line-or-beginning-search
+
+# Backspace behavior fix in Vi insert mode
+bindkey -M viins '^?' backward-delete-char
 
 # ------------------------------------------------------------------------------
 # 5. ALIASES & UTILITIES
 # ------------------------------------------------------------------------------
-# Navigation
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 
-# Modern alternative tools with standard fallbacks
 if command -v eza &> /dev/null; then
   alias ls="eza --icons --group-directories-first"
   alias ll="eza -lh --icons --group-directories-first"
   alias la="eza -lah --icons --group-directories-first"
   alias tree="eza --tree --icons"
-elif command -v exa &> /dev/null; then
-  alias ls="exa --icons --group-directories-first"
-  alias ll="exa -lh --icons --group-directories-first"
-  alias la="exa -lah --icons --group-directories-first"
-  alias tree="exa --tree --icons"
 else
   alias ls="ls --color=auto"
   alias ll="ls -lh --color=auto"
   alias la="ls -lah --color=auto"
 fi
 
-# On Pop!_OS / Ubuntu, 'bat' is installed as 'batcat'
 if command -v bat &> /dev/null; then
   alias cat="bat --style=plain"
 elif command -v batcat &> /dev/null; then
@@ -146,15 +123,12 @@ else
   alias grep="grep --color=auto"
 fi
 
-# ML4W Quick Access & Management
 alias zshconfig="$EDITOR ~/.zshrc"
 alias reload="source ~/.zshrc && echo 'Zsh configuration reloaded.'"
 
-# Pop!_OS 24.04 System Updates (APT + Flatpak)
 alias update="sudo apt update && sudo apt upgrade -y && flatpak update -y"
 alias cleanup="sudo apt autoremove -y && sudo apt autoclean && flatpak uninstall --unused -y"
 
-# Safety nets
 alias cp="cp -i"
 alias mv="mv -i"
 alias rm="rm -i"
@@ -162,18 +136,14 @@ alias rm="rm -i"
 # ------------------------------------------------------------------------------
 # 6. EXTERNAL INTEGRATIONS (Starship, Zoxide, FZF)
 # ------------------------------------------------------------------------------
-# Zoxide (fast cd)
 if command -v zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
 fi
 
-# FZF integration
 if command -v fzf &> /dev/null; then
-  # Source Debian/Ubuntu default FZF location if present
   [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
   [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
   [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
   export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --color=header:italic"
 fi
 
@@ -183,32 +153,21 @@ fi
 if command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
 else
-  # Minimalist fallback prompt if Starship is not installed yet
   autoload -Uz vcs_info
   precmd() { vcs_info }
   zstyle ':vcs_info:git:*' formats '%F{yellow}(%b)%f '
-
   setopt PROMPT_SUBST
   PROMPT='%F{cyan}%n@%m%f:%F{blue}%~%f ${vcs_info_msg_0_}%F{magenta}❯%f '
 fi
 
 # ------------------------------------------------------------------------------
 # 8. DEBIAN/POP!_OS PLUGIN PATHS
-# Sources plugins installed via apt (zsh-autosuggestions, zsh-syntax-highlighting)
 # ------------------------------------------------------------------------------
-# APT locations
 [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
   source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
   source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# Manual clone fallbacks (~/.zsh/)
-[ -f ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
-  source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-[ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
-  source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # ------------------------------------------------------------------------------
 # 9. WELCOME BANNER
