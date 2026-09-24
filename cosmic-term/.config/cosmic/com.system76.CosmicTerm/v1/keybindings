@@ -1,0 +1,17 @@
+{
+    // New tab & window controls
+    (modifiers: ["Control", "Shift"], key: "t"): NewTab,
+    (modifiers: ["Control", "Shift"], key: "q"): CloseTab,
+    (modifiers: ["Control"], key: "Tab"): NextTab,
+    (modifiers: ["Control", "Shift"], key: "Backtab"): PrevTab,
+
+    // Splitting panes
+    (modifiers: ["Control", "Shift"], key: "pipe"): SplitRight,
+    (modifiers: ["Control", "Shift"], key: "minus"): SplitDown,
+
+    // Font resizing
+    (modifiers: ["Control"], key: "plus"): ZoomIn,
+    (modifiers: ["Control"], key: "equal"): ZoomIn,
+    (modifiers: ["Control"], key: "minus"): ZoomOut,
+    (modifiers: ["Control"], key: "0"): ResetZoom,
+}

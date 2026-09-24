@@ -1,0 +1,45 @@
+(
+    // Font configuration
+    font_header: (
+        family: "JetBrains Mono",
+        weight: Normal,
+        stretch: Normal,
+        style: Normal,
+    ),
+    font_size: 11.0,
+    line_height: 1.1,
+
+    // Window appearance & padding
+    padding: (12, 12, 12, 12),
+    window_opacity: 0.92,
+    
+    // Cursor style (Beam cursor)
+    cursor_shape: Beam,
+
+    // Color theme definition
+    theme: Custom((
+        palette: (
+            // Tokyo Night Color Palette
+            black: (r: 0.08, g: 0.09, b: 0.12),         // #15161e
+            red: (r: 0.97, g: 0.46, b: 0.56),           // #f7768e
+            green: (r: 0.62, g: 0.81, b: 0.42),         // #9ece6a
+            yellow: (r: 0.88, g: 0.69, b: 0.41),        // #e0af68
+            blue: (r: 0.48, g: 0.64, b: 0.97),          // #7aa2f7
+            magenta: (r: 0.73, g: 0.60, b: 0.97),       // #bb9af7
+            cyan: (r: 0.49, g: 0.81, b: 1.00),          // #7dcfff
+            white: (r: 0.75, g: 0.79, b: 0.96),         // #c0caf5
+
+            bright_black: (r: 0.25, g: 0.28, b: 0.41),  // #414868
+            bright_red: (r: 0.97, g: 0.46, b: 0.56),    // #f7768e
+            bright_green: (r: 0.62, g: 0.81, b: 0.42),  // #9ece6a
+            bright_yellow: (r: 0.88, g: 0.69, b: 0.41), // #e0af68
+            bright_blue: (r: 0.48, g: 0.64, b: 0.97),   // #7aa2f7
+            bright_magenta: (r: 0.73, g: 0.60, b: 0.97),// #bb9af7
+            bright_cyan: (r: 0.49, g: 0.81, b: 1.00),   // #7dcfff
+            bright_white: (r: 0.75, g: 0.79, b: 0.96),  // #c0caf5
+        ),
+        bg: (r: 0.10, g: 0.11, b: 0.15),                // #1a1b26
+        fg: (r: 0.66, g: 0.69, b: 0.84),                // #a9b1d6
+        bright_fg: (r: 0.75, g: 0.79, b: 0.96),         // #c0caf5
+    )),
+)
