@@ -159,6 +159,13 @@ if command -v zoxide &>/dev/null; then
 fi
 
 # ------------------------------------------------------------------------------
+# TMUX ALIASES
+# ------------------------------------------------------------------------------
+alias tmux-install="~/.config/tmux/plugins/tpm/bin/install_plugins"
+alias tmux-update="~/.config/tmux/plugins/tpm/bin/update_plugins all"
+alias tmux-clean="~/.config/tmux/plugins/tpm/bin/clean_plugins"
+
+# ------------------------------------------------------------------------------
 # 7. PROMPT / STARSHIP INTEGRATION
 # ------------------------------------------------------------------------------
 if command -v starship &>/dev/null; then

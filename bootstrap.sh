@@ -94,6 +94,25 @@ stow_packages() {
 }
 
 # ------------------------------------------------------------------------------
+# AUTOMATE TMUX & TPM SETUP
+# ------------------------------------------------------------------------------
+setup_tmux() {
+  local tpm_dir="${HOME}/.config/tmux/plugins/tpm"
+
+  # Clone TPM if it isn't installed yet
+  if [[ ! -d "${tpm_dir}" ]]; then
+    echo "[INFO] Cloning Tmux Plugin Manager (TPM)..."
+    git clone https://github.com/tmux-plugins/tpm "${tpm_dir}"
+  fi
+
+  # Install plugins headlessly
+  if [[ -f "${tpm_dir}/bin/install_plugins" ]]; then
+    echo "[INFO] Installing Tmux plugins..."
+    "${tpm_dir}/bin/install_plugins"
+  fi
+}
+
+# ------------------------------------------------------------------------------
 # MAIN EXECUTION
 # ------------------------------------------------------------------------------
 main() {
@@ -102,6 +121,7 @@ main() {
   install_stow
   backup_conflicts
   stow_packages
+  setup_tmux
 
   log_info "Dotfiles successfully bootstrapped!"
   if [[ -d "${BACKUP_DIR}" ]]; then
