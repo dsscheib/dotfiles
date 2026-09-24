@@ -13,7 +13,7 @@ export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
 # Use Neovim as default man page pager
-if command -v nvim &> /dev/null; then
+if command -v nvim &>/dev/null; then
   export MANPAGER="nvim +Man!"
   export MANWIDTH=999
 fi
@@ -49,14 +49,14 @@ setopt HIST_SAVE_NO_DUPS      # Don't write duplicate entries to the history fil
 setopt HIST_REDUCE_BLANKS     # Remove unnecessary blanks from history commands
 
 # Directory & navigation behavior
-setopt AUTO_CD                # Type directory name to cd into it
-setopt AUTO_PUSHD             # Push directory onto stack on cd
-setopt PUSHD_IGNORE_DUPS      # Avoid duplicates in directory stack
-setopt PUSHD_SILENT           # Suppress directory stack output
+setopt AUTO_CD           # Type directory name to cd into it
+setopt AUTO_PUSHD        # Push directory onto stack on cd
+setopt PUSHD_IGNORE_DUPS # Avoid duplicates in directory stack
+setopt PUSHD_SILENT      # Suppress directory stack output
 
 # Miscellaneous
-setopt NO_BEEP                # Disable terminal bell
-setopt INTERACTIVE_COMMENTS   # Allow inline comments (#) in interactive shell
+setopt NO_BEEP              # Disable terminal bell
+setopt INTERACTIVE_COMMENTS # Allow inline comments (#) in interactive shell
 
 # ------------------------------------------------------------------------------
 # 3. COMPLETION SYSTEM
@@ -75,7 +75,7 @@ zstyle ':completion:*:*:*:*:warnings' format '%F{red}-- No matches found --%f'
 # ------------------------------------------------------------------------------
 # 4. KEYBINDINGS (Vi Mode Enabled)
 # ------------------------------------------------------------------------------
-bindkey -v # Enable Vi keybindings
+bindkey -v          # Enable Vi keybindings
 export KEYTIMEOUT=1 # Make switching between insert and normal mode instant
 
 # Maintain arrow key history searching in both Vi Insert & Normal modes
@@ -100,7 +100,7 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 
-if command -v eza &> /dev/null; then
+if command -v eza &>/dev/null; then
   alias ls="eza --icons --group-directories-first"
   alias ll="eza -lh --icons --group-directories-first"
   alias la="eza -lah --icons --group-directories-first"
@@ -111,13 +111,13 @@ else
   alias la="ls -lah --color=auto"
 fi
 
-if command -v bat &> /dev/null; then
+if command -v bat &>/dev/null; then
   alias cat="bat --style=plain"
-elif command -v batcat &> /dev/null; then
+elif command -v batcat &>/dev/null; then
   alias cat="batcat --style=plain"
 fi
 
-if command -v rg &> /dev/null; then
+if command -v rg &>/dev/null; then
   alias grep="rg"
 else
   alias grep="grep --color=auto"
@@ -136,11 +136,11 @@ alias rm="rm -i"
 # ------------------------------------------------------------------------------
 # 6. EXTERNAL INTEGRATIONS (Starship, Zoxide, FZF)
 # ------------------------------------------------------------------------------
-if command -v zoxide &> /dev/null; then
+if command -v zoxide &>/dev/null; then
   eval "$(zoxide init zsh)"
 fi
 
-if command -v fzf &> /dev/null; then
+if command -v fzf &>/dev/null; then
   [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
   [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
   [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -148,13 +148,24 @@ if command -v fzf &> /dev/null; then
 fi
 
 # ------------------------------------------------------------------------------
+# ZOXIDE INTEGRATION
+# ------------------------------------------------------------------------------
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh)"
+
+  # Aliases
+  alias cd="z"
+  alias cdi="zi"
+fi
+
+# ------------------------------------------------------------------------------
 # 7. PROMPT / STARSHIP INTEGRATION
 # ------------------------------------------------------------------------------
-if command -v starship &> /dev/null; then
+if command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
 else
   autoload -Uz vcs_info
-  precmd() { vcs_info }
+  precmd() { vcs_info; }
   zstyle ':vcs_info:git:*' formats '%F{yellow}(%b)%f '
   setopt PROMPT_SUBST
   PROMPT='%F{cyan}%n@%m%f:%F{blue}%~%f ${vcs_info_msg_0_}%F{magenta}❯%f '
@@ -163,17 +174,17 @@ fi
 # ------------------------------------------------------------------------------
 # 8. DEBIAN/POP!_OS PLUGIN PATHS
 # ------------------------------------------------------------------------------
-[ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
+[ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] &&
   source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-[ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
+[ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] &&
   source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # ------------------------------------------------------------------------------
 # 9. WELCOME BANNER
 # ------------------------------------------------------------------------------
-if command -v fastfetch &> /dev/null; then
+if command -v fastfetch &>/dev/null; then
   fastfetch
-elif command -v neofetch &> /dev/null; then
+elif command -v neofetch &>/dev/null; then
   neofetch
 fi
