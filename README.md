@@ -2,7 +2,7 @@
 
 ```sh
 cd $HOME/github
-git clone https://github.com/dsscheib/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
+git clone https://github.com/dsscheib/dotfiles.git $HOME/.dotfiles
+cd $HOME/.dotfiles
 ./bootstrap.sh
 ```
