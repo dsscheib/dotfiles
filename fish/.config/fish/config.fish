@@ -1,17 +1,106 @@
+# ==============================================================================
+# ML4W-INSPIRED FISH CONFIGURATION
+# Save to: ~/.config/fish/config.fish
+# ==============================================================================
+
 if status is-interactive
-  # Commands to run in interactive sessions can go here
-  set -g fish_key_bindings fish_vi_key_bindings
-  
-  zoxide init --cmd cd fish | source
-  starship preset nerd-font-symbols -o ~/.config/starship.toml
-  # starship preset tokyo-night -o ~/.config/starship.toml
-  starship init fish | source
 
-  # Django completions
-  __fish_complete_django django-admin.py
-  __fish_complete_django manage.py
+    # --------------------------------------------------------------------------
+    # 1. ENVIRONMENT VARIABLES & PATHS
+    # --------------------------------------------------------------------------
+    set -gx EDITOR nvim
+    set -gx VISUAL nvim
+    set -gx PAGER less
+    set -gx LANG en_US.UTF-8
 
-  # Make neovim the default pager for man pages
-  # set -gx MANPAGER "nvim -c 'set ft=man' -"
-  set -gx MANPAGER "nvim +Man!"
+    # Use Neovim as default man page pager
+    if type -q nvim
+        set -gx MANPAGER "nvim +Man!"
+        set -gx MANWIDTH 999
+    end
+
+    fish_add_path -g $HOME/bin
+    fish_add_path -g $HOME/.local/bin
+    fish_add_path -g $HOME/.cargo/bin
+    fish_add_path -g /var/lib/flatpak/exports/bin
+    fish_add_path -g $HOME/.local/share/flatpak/exports/bin
+    fish_add_path -g /usr/local/bin
+
+    set -g fish_greeting
+
+    # --------------------------------------------------------------------------
+    # 2. KEYBINDINGS (Vi Mode Enabled)
+    # --------------------------------------------------------------------------
+    fish_vi_key_bindings
+
+    # Preserve history search with Up/Down arrows in Vi insert and normal mode
+    bind -M default \e\[A history-search-backward
+    bind -M default \e\[B history-search-forward
+    bind -M insert \e\[A history-search-backward
+    bind -M insert \e\[B history-search-forward
+
+    # --------------------------------------------------------------------------
+    # 3. ALIASES & UTILITIES
+    # --------------------------------------------------------------------------
+    alias ..="cd .."
+    alias ...="cd ../.."
+    alias ....="cd ../../.."
+
+    if type -q eza
+        alias ls="eza --icons --group-directories-first"
+        alias ll="eza -lh --icons --group-directories-first"
+        alias la="eza -lah --icons --group-directories-first"
+        alias tree="eza --tree --icons"
+    else
+        alias ls="ls --color=auto"
+        alias ll="ls -lh --color=auto"
+        alias la="ls -lah --color=auto"
+    end
+
+    if type -q bat
+        alias cat="bat --style=plain"
+    else if type -q batcat
+        alias cat="batcat --style=plain"
+    end
+
+    if type -q rg
+        alias grep="rg"
+    else
+        alias grep="grep --color=auto"
+    end
+
+    alias fishconfig="$EDITOR ~/.config/fish/config.fish"
+    alias reload="source ~/.config/fish/config.fish; and echo 'Fish configuration reloaded.'"
+
+    alias update="sudo apt update && sudo apt upgrade -y && flatpak update -y"
+    alias cleanup="sudo apt autoremove -y && sudo apt autoclean && flatpak uninstall --unused -y"
+
+    alias cp="cp -i"
+    alias mv="mv -i"
+    alias rm="rm -i"
+
+    # --------------------------------------------------------------------------
+    # 4. EXTERNAL INTEGRATIONS
+    # --------------------------------------------------------------------------
+    if type -q zoxide
+        zoxide init fish | source
+    end
+
+    if type -q fzf
+        set -gx FZF_DEFAULT_OPTS "--height 40% --layout=reverse --border --color=header:italic"
+    end
+
+    if type -q starship
+        starship init fish | source
+    end
+
+    # --------------------------------------------------------------------------
+    # 5. WELCOME BANNER
+    # --------------------------------------------------------------------------
+    if type -q fastfetch
+        fastfetch
+    else if type -q neofetch
+        neofetch
+    end
+
 end
