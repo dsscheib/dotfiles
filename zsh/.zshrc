@@ -31,6 +31,9 @@ path=(
 )
 export PATH
 
+# Rust completions
+fpath=($HOME/.zsh/completion $fpath)
+
 # ------------------------------------------------------------------------------
 # 2. ZSH OPTIONS & HISTORY
 # ------------------------------------------------------------------------------
@@ -195,3 +198,12 @@ if command -v fastfetch &>/dev/null; then
 elif command -v neofetch &>/dev/null; then
   neofetch
 fi
+
+# ------------------------------------------------------------------------------
+# DJANGO COMPLETIONS
+# ------------------------------------------------------------------------------
+# Enable Zsh completion system if not already enabled
+autoload -Uz compinit && compinit
+
+# Django completions
+eval "$(django-admin completions --shell=zsh 2>/dev/null)"

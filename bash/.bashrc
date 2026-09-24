@@ -141,3 +141,8 @@ if command -v fastfetch &>/dev/null; then
 elif command -v neofetch &>/dev/null; then
   neofetch
 fi
+
+# ------------------------------------------------------------------------------
+# DJANGO COMPLETIONS
+# ------------------------------------------------------------------------------
+eval "$(django-admin completions --shell=bash)"
