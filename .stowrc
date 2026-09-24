@@ -1,0 +1,5 @@
+--ignore=".DS_Store"
+--ignore="README.md"
+--ignore="\.git.*"
+--ignore="\.git*"
+--target=$HOME

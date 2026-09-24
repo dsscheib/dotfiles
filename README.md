@@ -2,7 +2,7 @@
 
 ```sh
 cd $HOME/github
-git clone https://github.com/dsscheib/dotfiles.git
-cd dotfiles
-make init
+git clone https://github.com/dsscheib/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+./bootstrap.sh
 ```
