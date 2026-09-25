@@ -82,6 +82,7 @@ if status is-interactive
     alias mv="mv -i"
     alias rm="rm -i"
 
+    alias sudo="sudo "
     alias vim="nvim"
 
     # --------------------------------------------------------------------------
