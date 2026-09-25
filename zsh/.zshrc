@@ -203,7 +203,7 @@ fi
 # DJANGO COMPLETIONS
 # ------------------------------------------------------------------------------
 # Enable Zsh completion system if not already enabled
-autoload -Uz compinit && compinit
+autoload -U compinit && compinit
 
 # Django completions
 eval "$(django-admin completions --shell=zsh 2>/dev/null)"
