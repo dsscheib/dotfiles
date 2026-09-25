@@ -31,6 +31,9 @@ path=(
 )
 export PATH
 
+# Add Mise to the PATH
+eval "$(mise activate zsh)"
+
 # Rust completions
 fpath=($HOME/.zsh/completion $fpath)
 
