@@ -30,6 +30,9 @@ for dir in "$HOME/bin" "$HOME/.local/bin" "$HOME/.cargo/bin" \
   fi
 done
 
+# Add Mise to the PATH
+eval "$(mise activate bash)"
+
 # ------------------------------------------------------------------------------
 # 2. BASH OPTIONS & HISTORY
 # ------------------------------------------------------------------------------
