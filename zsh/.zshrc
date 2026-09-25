@@ -207,3 +207,6 @@ autoload -U compinit && compinit
 
 # Django completions
 eval "$(django-admin completions --shell=zsh 2>/dev/null)"
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /home/dsscheib/.local/share/mise/installs/go/1.27.1/bin/gocomplete go
