@@ -25,6 +25,9 @@ if status is-interactive
     fish_add_path -g /var/lib/flatpak/exports/bin
     fish_add_path -g $HOME/.local/share/flatpak/exports/bin
     fish_add_path -g /usr/local/bin
+    
+    # Add Mise to the PATH
+    mise activate fish | source
 
     set -g fish_greeting
 
