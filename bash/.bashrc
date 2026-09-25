@@ -142,10 +142,3 @@ elif command -v neofetch &>/dev/null; then
   neofetch
 fi
 
-# ------------------------------------------------------------------------------
-# DJANGO COMPLETIONS
-# ------------------------------------------------------------------------------
-eval "$(django-admin completions --shell=bash)"
-. "$HOME/.cargo/env"
-
-complete -C /home/dsscheib/.local/share/mise/installs/go/1.27.1/bin/gocomplete go
