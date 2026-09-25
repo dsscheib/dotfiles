@@ -198,15 +198,3 @@ if command -v fastfetch &>/dev/null; then
 elif command -v neofetch &>/dev/null; then
   neofetch
 fi
-
-# ------------------------------------------------------------------------------
-# DJANGO COMPLETIONS
-# ------------------------------------------------------------------------------
-# Enable Zsh completion system if not already enabled
-autoload -U compinit && compinit
-
-# Django completions
-eval "$(django-admin completions --shell=zsh 2>/dev/null)"
-
-autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /home/dsscheib/.local/share/mise/installs/go/1.27.1/bin/gocomplete go
