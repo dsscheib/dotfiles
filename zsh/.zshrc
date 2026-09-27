@@ -68,10 +68,11 @@ setopt INTERACTIVE_COMMENTS # Allow inline comments (#) in interactive shell
 # ------------------------------------------------------------------------------
 # 3. COMPLETION SYSTEM
 # ------------------------------------------------------------------------------
-autoload -Uz compinit
+autoload -Uz compinit bashcompinit
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "$HOME/.cache/zsh/zcompcache"
 compinit -d "$HOME/.cache/zsh/zcompdump"
+bashcompinit
 
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*' menu select
@@ -147,7 +148,9 @@ alias vim=nvim
 # 6. EXTERNAL INTEGRATIONS (Starship, Zoxide, FZF)
 # ------------------------------------------------------------------------------
 # Enable gocomplete for Go command completions
-complete -o nospace -C gocomplete go
+if command -v gocomplete &>/dev/null; then
+  complete -o nospace -C gocomplete go
+fi
 
 if command -v zoxide &>/dev/null; then
   eval "$(zoxide init zsh)"
