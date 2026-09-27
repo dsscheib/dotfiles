@@ -22,6 +22,8 @@ if status is-interactive
     fish_add_path -g $HOME/bin
     fish_add_path -g $HOME/.local/bin
     fish_add_path -g $HOME/.cargo/bin
+    fish_add_path -g $HOME/go/bin
+    fish_add_path -g $HOME/.local/share/mise/shims
     fish_add_path -g /var/lib/flatpak/exports/bin
     fish_add_path -g $HOME/.local/share/flatpak/exports/bin
     fish_add_path -g /usr/local/bin
@@ -88,6 +90,11 @@ if status is-interactive
     # --------------------------------------------------------------------------
     # 4. EXTERNAL INTEGRATIONS
     # --------------------------------------------------------------------------
+    # Go Completion Integration
+    if type -q gocomplete
+        complete -c go -f -a "(gocomplete (commandline -cp))"
+    end
+
     if type -q zoxide
         zoxide init fish | source
     end
