@@ -13,7 +13,6 @@ if status is-interactive
     set -gx PAGER less
     set -gx LANG en_US.UTF-8
 
-    # Use Neovim as default man page pager
     if type -q nvim
         set -gx MANPAGER "nvim +Man!"
         set -gx MANWIDTH 999
@@ -27,8 +26,7 @@ if status is-interactive
     fish_add_path -g /var/lib/flatpak/exports/bin
     fish_add_path -g $HOME/.local/share/flatpak/exports/bin
     fish_add_path -g /usr/local/bin
-    
-    # Add Mise to the PATH
+
     mise activate fish | source
 
     set -g fish_greeting
@@ -38,7 +36,6 @@ if status is-interactive
     # --------------------------------------------------------------------------
     fish_vi_key_bindings
 
-    # Preserve history search with Up/Down arrows in Vi insert and normal mode
     bind -M default \e\[A history-search-backward
     bind -M default \e\[B history-search-forward
     bind -M insert \e\[A history-search-backward
@@ -90,13 +87,10 @@ if status is-interactive
     # --------------------------------------------------------------------------
     # 4. EXTERNAL INTEGRATIONS
     # --------------------------------------------------------------------------
-    # Go Completion Integration
-    if type -q gocomplete
-        complete -c go -f -a "(gocomplete (commandline -cp))"
-    end
-
     if type -q zoxide
         zoxide init fish | source
+        alias cd="z"
+        alias cdi="zi"
     end
 
     if type -q fzf
@@ -107,20 +101,11 @@ if status is-interactive
         starship init fish | source
     end
 
-    # --------------------------------------------------------------------------
-    # ZOXIDE INTEGRATION
-    # --------------------------------------------------------------------------
-    if type -q zoxide
-        zoxide init fish | source
-        
-        # Aliases
-        alias cd="z"
-        alias cdi="zi"
+    if type -q gocomplete
+        complete -c go -f -a "(gocomplete (commandline -cp))"
     end
 
-    # --------------------------------------------------------------------------
     # TMUX ALIASES
-    # --------------------------------------------------------------------------
     alias tmux-install="~/.config/tmux/plugins/tpm/bin/install_plugins"
     alias tmux-update="~/.config/tmux/plugins/tpm/bin/update_plugins all"
     alias tmux-clean="~/.config/tmux/plugins/tpm/bin/clean_plugins"
