@@ -16,23 +16,26 @@ export VISUAL="nvim"
 export PAGER="less"
 export LANG="en_US.UTF-8"
 
-# Use Neovim as default man page pager
 if command -v nvim &>/dev/null; then
   export MANPAGER="nvim +Man!"
   export MANWIDTH=999
 fi
 
-for dir in "$HOME/bin" "$HOME/.local/bin" "$HOME/.cargo/bin" \
-  "$HOME/go/bin" "$HOME/.local/share/mise/shims" \
-  "/var/lib/flatpak/exports/bin" "$HOME/.local/share/flatpak/exports/bin" \
-  "/usr/local/bin"; do
+for dir in "$HOME/bin" "$HOME/.local/bin" "$HOME/.cargo/bin" "$HOME/go/bin" \
+  "$HOME/.local/share/mise/shims" "/var/lib/flatpak/exports/bin" \
+  "$HOME/.local/share/flatpak/exports/bin" "/usr/local/bin"; do
   if [[ -d "$dir" && ":$PATH:" != *":$dir:"* ]]; then
     export PATH="$dir:$PATH"
   fi
 done
 
-# Add Mise to the PATH
 eval "$(mise activate bash)"
+
+[ -s "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+if [[ -d "$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin" ]]; then
+  export STM32_PRG_PATH="$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
+fi
 
 # ------------------------------------------------------------------------------
 # 2. BASH OPTIONS & HISTORY
@@ -50,9 +53,8 @@ shopt -s globstar
 # ------------------------------------------------------------------------------
 # 3. KEYBINDINGS (Vi Mode Enabled)
 # ------------------------------------------------------------------------------
-set -o vi # Enable Vi keybindings for readline
+set -o vi 
 
-# Bind Up/Down history search in Vi insert/command modes
 bind -m vi-insert '"\e[A": history-search-backward'
 bind -m vi-insert '"\e[B": history-search-forward'
 bind -m vi-command '"\e[A": history-search-backward'
@@ -65,7 +67,7 @@ bind -m vi-command '"j": history-search-forward'
 # ------------------------------------------------------------------------------
 alias ..="cd .."
 alias ...="cd ../.."
-alias ....="cd ../../.."
+alias ....="cd ../../../"
 
 if command -v eza &>/dev/null; then
   alias ls="eza --icons --group-directories-first"
@@ -108,6 +110,8 @@ alias vim=nvim
 # ------------------------------------------------------------------------------
 if command -v zoxide &>/dev/null; then
   eval "$(zoxide init bash)"
+  alias cd="z"
+  alias cdi="zi"
 fi
 
 if command -v fzf &>/dev/null; then
@@ -122,20 +126,11 @@ else
   PS1='\[\e[36m\]\u@\h\[\e[0m\]:\[\e[34m\]\w\[\e[0m\]\$ '
 fi
 
-# ------------------------------------------------------------------------------
-# ZOXIDE INTEGRATION
-# ------------------------------------------------------------------------------
-if command -v zoxide &>/dev/null; then
-  eval "$(zoxide init bash)"
-
-  # Aliases
-  alias cd="z"
-  alias cdi="zi"
+if command -v gocomplete &>/dev/null; then
+  complete -o nospace -C gocomplete go
 fi
 
-# ------------------------------------------------------------------------------
 # TMUX ALIASES
-# ------------------------------------------------------------------------------
 alias tmux-install="~/.config/tmux/plugins/tpm/bin/install_plugins"
 alias tmux-update="~/.config/tmux/plugins/tpm/bin/update_plugins all"
 alias tmux-clean="~/.config/tmux/plugins/tpm/bin/clean_plugins"
@@ -147,8 +142,4 @@ if command -v fastfetch &>/dev/null; then
   fastfetch
 elif command -v neofetch &>/dev/null; then
   neofetch
-fi
-
-if command -v gocomplete &>/dev/null; then
-  complete -o nospace -C gocomplete go
 fi
