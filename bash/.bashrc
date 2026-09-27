@@ -23,6 +23,7 @@ if command -v nvim &>/dev/null; then
 fi
 
 for dir in "$HOME/bin" "$HOME/.local/bin" "$HOME/.cargo/bin" \
+  "$HOME/go/bin" "$HOME/.local/share/mise/shims" \
   "/var/lib/flatpak/exports/bin" "$HOME/.local/share/flatpak/exports/bin" \
   "/usr/local/bin"; do
   if [[ -d "$dir" && ":$PATH:" != *":$dir:"* ]]; then
@@ -148,3 +149,6 @@ elif command -v neofetch &>/dev/null; then
   neofetch
 fi
 
+if command -v gocomplete &>/dev/null; then
+  complete -o nospace -C gocomplete go
+fi
