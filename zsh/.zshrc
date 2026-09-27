@@ -24,6 +24,7 @@ path=(
   "$HOME/bin"
   "$HOME/.local/bin"
   "$HOME/.cargo/bin"
+  "$HOME/go/bin"
   /var/lib/flatpak/exports/bin
   "$HOME/.local/share/flatpak/exports/bin"
   /usr/local/bin
@@ -145,6 +146,9 @@ alias vim=nvim
 # ------------------------------------------------------------------------------
 # 6. EXTERNAL INTEGRATIONS (Starship, Zoxide, FZF)
 # ------------------------------------------------------------------------------
+# Enable gocomplete for Go command completions
+complete -o nospace -C gocomplete go
+
 if command -v zoxide &>/dev/null; then
   eval "$(zoxide init zsh)"
 fi
