@@ -12,19 +12,18 @@ export PAGER="less"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
-# Use Neovim as default man page pager
 if command -v nvim &>/dev/null; then
   export MANPAGER="nvim +Man!"
   export MANWIDTH=999
 fi
 
-# Deduplicate and append essential paths
 typeset -U path
 path=(
   "$HOME/bin"
   "$HOME/.local/bin"
   "$HOME/.cargo/bin"
   "$HOME/go/bin"
+  "$HOME/.local/share/mise/shims"
   /var/lib/flatpak/exports/bin
   "$HOME/.local/share/flatpak/exports/bin"
   /usr/local/bin
@@ -32,11 +31,7 @@ path=(
 )
 export PATH
 
-# Add Mise to the PATH
 eval "$(mise activate zsh)"
-
-# Rust completions
-fpath=($HOME/.zsh/completion $fpath)
 
 # ------------------------------------------------------------------------------
 # 2. ZSH OPTIONS & HISTORY
@@ -45,29 +40,29 @@ HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000
 SAVEHIST=10000
 
-# History options
-setopt SHARE_HISTORY          # Share command history across open terminals
-setopt HIST_EXPIRE_DUPS_FIRST # Expire duplicate entries first when trimming
-setopt HIST_IGNORE_DUPS       # Don't record duplicate entries consecutively
-setopt HIST_IGNORE_ALL_DUPS   # Delete old duplicate entries if a new one is added
-setopt HIST_FIND_NO_DUPS      # Do not display duplicates when searching history
-setopt HIST_IGNORE_SPACE      # Don't record commands starting with a space
-setopt HIST_SAVE_NO_DUPS      # Don't write duplicate entries to the history file
-setopt HIST_REDUCE_BLANKS     # Remove unnecessary blanks from history commands
+setopt SHARE_HISTORY          
+setopt HIST_EXPIRE_DUPS_FIRST 
+setopt HIST_IGNORE_DUPS       
+setopt HIST_IGNORE_ALL_DUPS   
+setopt HIST_FIND_NO_DUPS      
+setopt HIST_IGNORE_SPACE      
+setopt HIST_SAVE_NO_DUPS      
+setopt HIST_REDUCE_BLANKS     
 
-# Directory & navigation behavior
-setopt AUTO_CD           # Type directory name to cd into it
-setopt AUTO_PUSHD        # Push directory onto stack on cd
-setopt PUSHD_IGNORE_DUPS # Avoid duplicates in directory stack
-setopt PUSHD_SILENT      # Suppress directory stack output
+setopt AUTO_CD           
+setopt AUTO_PUSHD        
+setopt PUSHD_IGNORE_DUPS 
+setopt PUSHD_SILENT      
 
-# Miscellaneous
-setopt NO_BEEP              # Disable terminal bell
-setopt INTERACTIVE_COMMENTS # Allow inline comments (#) in interactive shell
+setopt NO_BEEP              
+setopt INTERACTIVE_COMMENTS 
 
 # ------------------------------------------------------------------------------
 # 3. COMPLETION SYSTEM
 # ------------------------------------------------------------------------------
+# Ensure custom completions directory is added to fpath BEFORE compinit runs
+fpath=("$HOME/.zsh/completion" $fpath)
+
 autoload -Uz compinit bashcompinit
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "$HOME/.cache/zsh/zcompcache"
@@ -80,13 +75,17 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*:*:*:*:descriptions' format '%F{cyan}-- %d --%f'
 zstyle ':completion:*:*:*:*:warnings' format '%F{red}-- No matches found --%f'
 
+# Go completion via bashcompinit
+if command -v gocomplete &>/dev/null; then
+  complete -o nospace -C gocomplete go
+fi
+
 # ------------------------------------------------------------------------------
 # 4. KEYBINDINGS (Vi Mode Enabled)
 # ------------------------------------------------------------------------------
-bindkey -v          # Enable Vi keybindings
-export KEYTIMEOUT=1 # Make switching between insert and normal mode instant
+bindkey -v          
+export KEYTIMEOUT=1 
 
-# Maintain arrow key history searching in both Vi Insert & Normal modes
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
@@ -98,7 +97,6 @@ bindkey -M vicmd '^[[B' down-line-or-beginning-search
 bindkey -M vicmd 'k' up-line-or-beginning-search
 bindkey -M vicmd 'j' down-line-or-beginning-search
 
-# Backspace behavior fix in Vi insert mode
 bindkey -M viins '^?' backward-delete-char
 
 # ------------------------------------------------------------------------------
@@ -147,13 +145,10 @@ alias vim=nvim
 # ------------------------------------------------------------------------------
 # 6. EXTERNAL INTEGRATIONS (Starship, Zoxide, FZF)
 # ------------------------------------------------------------------------------
-# Enable gocomplete for Go command completions
-if command -v gocomplete &>/dev/null; then
-  complete -o nospace -C gocomplete go
-fi
-
 if command -v zoxide &>/dev/null; then
   eval "$(zoxide init zsh)"
+  alias cd="z"
+  alias cdi="zi"
 fi
 
 if command -v fzf &>/dev/null; then
@@ -163,20 +158,7 @@ if command -v fzf &>/dev/null; then
   export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --color=header:italic"
 fi
 
-# ------------------------------------------------------------------------------
-# ZOXIDE INTEGRATION
-# ------------------------------------------------------------------------------
-if command -v zoxide &>/dev/null; then
-  eval "$(zoxide init zsh)"
-
-  # Aliases
-  alias cd="z"
-  alias cdi="zi"
-fi
-
-# ------------------------------------------------------------------------------
 # TMUX ALIASES
-# ------------------------------------------------------------------------------
 alias tmux-install="~/.config/tmux/plugins/tpm/bin/install_plugins"
 alias tmux-update="~/.config/tmux/plugins/tpm/bin/update_plugins all"
 alias tmux-clean="~/.config/tmux/plugins/tpm/bin/clean_plugins"
