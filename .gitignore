@@ -1,2 +1,6 @@
 **/plugins/**
 **/functions/**
+**/fish_variables
+**/.DS_Store
+*.swp
+*~

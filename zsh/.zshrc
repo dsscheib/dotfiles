@@ -23,7 +23,6 @@ path=(
   "$HOME/.local/bin"
   "$HOME/.cargo/bin"
   "$HOME/go/bin"
-  "$HOME/.local/share/mise/shims"
   /var/lib/flatpak/exports/bin
   "$HOME/.local/share/flatpak/exports/bin"
   /usr/local/bin
@@ -33,14 +32,21 @@ export PATH
 
 eval "$(mise activate zsh)"
 
+[ -s "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+if [[ -d "$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin" ]]; then
+  export STM32_PRG_PATH="$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
+fi
+
 # ------------------------------------------------------------------------------
 # 2. ZSH OPTIONS & HISTORY
 # ------------------------------------------------------------------------------
 HISTFILE="$HOME/.zsh_history"
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=50000
+SAVEHIST=50000
 
-setopt SHARE_HISTORY          
+setopt EXTENDED_HISTORY
+setopt SHARE_HISTORY
 setopt HIST_EXPIRE_DUPS_FIRST 
 setopt HIST_IGNORE_DUPS       
 setopt HIST_IGNORE_ALL_DUPS   
@@ -66,7 +72,13 @@ fpath=("$HOME/.zsh/completion" $fpath)
 autoload -Uz compinit bashcompinit
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "$HOME/.cache/zsh/zcompcache"
-compinit -d "$HOME/.cache/zsh/zcompdump"
+
+# Cache completion dump: only rebuild once every 24 hours
+if [[ -n ${HOME}/.cache/zsh/zcompdump(#qN.mh+24) ]]; then
+  compinit -d "$HOME/.cache/zsh/zcompdump"
+else
+  compinit -C -d "$HOME/.cache/zsh/zcompdump"
+fi
 bashcompinit
 
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
@@ -146,9 +158,7 @@ alias vim=nvim
 # 6. EXTERNAL INTEGRATIONS (Starship, Zoxide, FZF)
 # ------------------------------------------------------------------------------
 if command -v zoxide &>/dev/null; then
-  eval "$(zoxide init zsh)"
-  alias cd="z"
-  alias cdi="zi"
+  eval "$(zoxide init zsh --cmd cd)"
 fi
 
 if command -v fzf &>/dev/null; then
@@ -159,9 +169,9 @@ if command -v fzf &>/dev/null; then
 fi
 
 # TMUX ALIASES
-alias tmux-install="~/.config/tmux/plugins/tpm/bin/install_plugins"
-alias tmux-update="~/.config/tmux/plugins/tpm/bin/update_plugins all"
-alias tmux-clean="~/.config/tmux/plugins/tpm/bin/clean_plugins"
+alias tmux-install="~/.local/share/tmux/plugins/tpm/bin/install_plugins"
+alias tmux-update="~/.local/share/tmux/plugins/tpm/bin/update_plugins all"
+alias tmux-clean="~/.local/share/tmux/plugins/tpm/bin/clean_plugins"
 
 # ------------------------------------------------------------------------------
 # 7. PROMPT / STARSHIP INTEGRATION
@@ -189,8 +199,10 @@ fi
 # ------------------------------------------------------------------------------
 # 9. WELCOME BANNER
 # ------------------------------------------------------------------------------
-if command -v fastfetch &>/dev/null; then
-  fastfetch
-elif command -v neofetch &>/dev/null; then
-  neofetch
+if [[ -z "${TMUX:-}" && -z "${NVIM:-}" ]]; then
+  if command -v fastfetch &>/dev/null; then
+    fastfetch
+  elif command -v neofetch &>/dev/null; then
+    neofetch
+  fi
 fi

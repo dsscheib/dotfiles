@@ -34,6 +34,10 @@ install_stow() {
     sudo pacman -S --noconfirm stow
   elif command -v dnf &>/dev/null; then
     sudo dnf install -y stow
+  elif command -v brew &>/dev/null; then
+    brew install stow
+  elif command -v zypper &>/dev/null; then
+    sudo zypper install -y stow
   else
     log_error "Could not detect a supported package manager. Please install Stow manually."
     exit 1
@@ -97,18 +101,43 @@ stow_packages() {
 # AUTOMATE TMUX & TPM SETUP
 # ------------------------------------------------------------------------------
 setup_tmux() {
-  local tpm_dir="${HOME}/.config/tmux/plugins/tpm"
+  local tpm_dir="${HOME}/.local/share/tmux/plugins/tpm"
 
   # Clone TPM if it isn't installed yet
   if [[ ! -d "${tpm_dir}" ]]; then
-    echo "[INFO] Cloning Tmux Plugin Manager (TPM)..."
+    log_info "Cloning Tmux Plugin Manager (TPM)..."
+    mkdir -p "$(dirname "${tpm_dir}")"
     git clone https://github.com/tmux-plugins/tpm "${tpm_dir}"
   fi
 
-  # Install plugins headlessly
-  if [[ -f "${tpm_dir}/bin/install_plugins" ]]; then
-    echo "[INFO] Installing Tmux plugins..."
-    "${tpm_dir}/bin/install_plugins"
+  # Install plugins headlessly if tmux is available
+  if command -v tmux &>/dev/null && [[ -f "${tpm_dir}/bin/install_plugins" ]]; then
+    log_info "Installing Tmux plugins..."
+    "${tpm_dir}/bin/install_plugins" || true
+  fi
+}
+
+# ------------------------------------------------------------------------------
+# 5. VERIFY SYSTEM DEPENDENCIES
+# ------------------------------------------------------------------------------
+check_dependencies() {
+  local core_tools=("nvim" "tmux" "starship" "zoxide" "fzf" "eza" "rg" "mise" "fastfetch")
+  local missing=()
+
+  for tool in "${core_tools[@]}"; do
+    if ! command -v "${tool}" &>/dev/null; then
+      missing+=("${tool}")
+    fi
+  done
+
+  if ! command -v bat &>/dev/null && ! command -v batcat &>/dev/null; then
+    missing+=("bat")
+  fi
+
+  if [[ ${#missing[@]} -gt 0 ]]; then
+    log_warn "Some recommended CLI tools are missing: ${missing[*]}"
+  else
+    log_info "All recommended CLI tools are installed!"
   fi
 }
 
@@ -122,6 +151,7 @@ main() {
   backup_conflicts
   stow_packages
   setup_tmux
+  check_dependencies
 
   log_info "Dotfiles successfully bootstrapped!"
   if [[ -d "${BACKUP_DIR}" ]]; then

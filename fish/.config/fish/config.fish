@@ -22,12 +22,19 @@ if status is-interactive
     fish_add_path -g $HOME/.local/bin
     fish_add_path -g $HOME/.cargo/bin
     fish_add_path -g $HOME/go/bin
-    fish_add_path -g $HOME/.local/share/mise/shims
     fish_add_path -g /var/lib/flatpak/exports/bin
     fish_add_path -g $HOME/.local/share/flatpak/exports/bin
     fish_add_path -g /usr/local/bin
 
     mise activate fish | source
+
+    if test -s "$HOME/.cargo/env.fish"
+        source "$HOME/.cargo/env.fish"
+    end
+
+    if test -d "$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
+        set -gx STM32_PRG_PATH "$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
+    end
 
     set -g fish_greeting
 
@@ -81,16 +88,13 @@ if status is-interactive
     alias mv="mv -i"
     alias rm="rm -i"
 
-    alias sudo="sudo "
     alias vim="nvim"
 
     # --------------------------------------------------------------------------
     # 4. EXTERNAL INTEGRATIONS
     # --------------------------------------------------------------------------
     if type -q zoxide
-        zoxide init fish | source
-        alias cd="z"
-        alias cdi="zi"
+        zoxide init fish --cmd cd | source
     end
 
     if type -q fzf
@@ -106,17 +110,19 @@ if status is-interactive
     end
 
     # TMUX ALIASES
-    alias tmux-install="~/.config/tmux/plugins/tpm/bin/install_plugins"
-    alias tmux-update="~/.config/tmux/plugins/tpm/bin/update_plugins all"
-    alias tmux-clean="~/.config/tmux/plugins/tpm/bin/clean_plugins"
+    alias tmux-install="~/.local/share/tmux/plugins/tpm/bin/install_plugins"
+    alias tmux-update="~/.local/share/tmux/plugins/tpm/bin/update_plugins all"
+    alias tmux-clean="~/.local/share/tmux/plugins/tpm/bin/clean_plugins"
 
     # --------------------------------------------------------------------------
     # 5. WELCOME BANNER
     # --------------------------------------------------------------------------
-    if type -q fastfetch
-        fastfetch
-    else if type -q neofetch
-        neofetch
+    if test -z "$TMUX" -a -z "$NVIM"
+        if type -q fastfetch
+            fastfetch
+        else if type -q neofetch
+            neofetch
+        end
     end
 
 end

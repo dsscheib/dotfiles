@@ -22,8 +22,8 @@ if command -v nvim &>/dev/null; then
 fi
 
 for dir in "$HOME/bin" "$HOME/.local/bin" "$HOME/.cargo/bin" "$HOME/go/bin" \
-  "$HOME/.local/share/mise/shims" "/var/lib/flatpak/exports/bin" \
-  "$HOME/.local/share/flatpak/exports/bin" "/usr/local/bin"; do
+  "/var/lib/flatpak/exports/bin" "$HOME/.local/share/flatpak/exports/bin" \
+  "/usr/local/bin"; do
   if [[ -d "$dir" && ":$PATH:" != *":$dir:"* ]]; then
     export PATH="$dir:$PATH"
   fi
@@ -41,9 +41,9 @@ fi
 # 2. BASH OPTIONS & HISTORY
 # ------------------------------------------------------------------------------
 HISTFILE="$HOME/.bash_history"
-HISTSIZE=10000
-HISTFILESIZE=10000
-HISTCONTROL=ignoreboth:erasedups
+HISTSIZE=50000
+HISTFILESIZE=50000
+HISTCONTROL=ignoreboth
 
 shopt -s histappend
 shopt -s checkwinsize
@@ -53,7 +53,7 @@ shopt -s globstar
 # ------------------------------------------------------------------------------
 # 3. KEYBINDINGS (Vi Mode Enabled)
 # ------------------------------------------------------------------------------
-set -o vi 
+set -o vi
 
 bind -m vi-insert '"\e[A": history-search-backward'
 bind -m vi-insert '"\e[B": history-search-forward'
@@ -109,9 +109,7 @@ alias vim=nvim
 # 5. EXTERNAL INTEGRATIONS
 # ------------------------------------------------------------------------------
 if command -v zoxide &>/dev/null; then
-  eval "$(zoxide init bash)"
-  alias cd="z"
-  alias cdi="zi"
+  eval "$(zoxide init bash --cmd cd)"
 fi
 
 if command -v fzf &>/dev/null; then
@@ -131,15 +129,17 @@ if command -v gocomplete &>/dev/null; then
 fi
 
 # TMUX ALIASES
-alias tmux-install="~/.config/tmux/plugins/tpm/bin/install_plugins"
-alias tmux-update="~/.config/tmux/plugins/tpm/bin/update_plugins all"
-alias tmux-clean="~/.config/tmux/plugins/tpm/bin/clean_plugins"
+alias tmux-install="~/.local/share/tmux/plugins/tpm/bin/install_plugins"
+alias tmux-update="~/.local/share/tmux/plugins/tpm/bin/update_plugins all"
+alias tmux-clean="~/.local/share/tmux/plugins/tpm/bin/clean_plugins"
 
 # ------------------------------------------------------------------------------
 # 6. WELCOME BANNER
 # ------------------------------------------------------------------------------
-if command -v fastfetch &>/dev/null; then
-  fastfetch
-elif command -v neofetch &>/dev/null; then
-  neofetch
+if [[ -z "${TMUX:-}" && -z "${NVIM:-}" ]]; then
+  if command -v fastfetch &>/dev/null; then
+    fastfetch
+  elif command -v neofetch &>/dev/null; then
+    neofetch
+  fi
 fi

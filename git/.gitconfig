@@ -1,0 +1,42 @@
+[user]
+	name = Daniel Scheib
+	email = dsscheib@gmail.com
+
+[init]
+	defaultBranch = main
+
+[push]
+	autoSetupRemote = true
+
+[pull]
+	rebase = true
+
+[rebase]
+	autoStash = true
+
+[merge]
+	conflictstyle = zdiff3
+
+[diff]
+	algorithm = histogram
+	colorMoved = default
+
+[core]
+	editor = nvim
+	autocrlf = input
+	excludesfile = ~/.config/git/ignore
+
+[credential]
+	credentialStore = gpg
+	helper = 
+	helper = /usr/local/bin/git-credential-manager
+
+[credential "https://github.com"]
+	username = dsscheib
+
+[credential "https://dev.azure.com"]
+	useHttpPath = true
+
+# Local machine or secret overrides (optional)
+[include]
+	path = ~/.gitconfig.local
