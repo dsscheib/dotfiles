@@ -51,6 +51,12 @@ alias reload="source ~/.bashrc && echo 'Bash configuration reloaded.'"
 # ------------------------------------------------------------------------------
 # 5. EXTERNAL INTEGRATIONS
 # ------------------------------------------------------------------------------
+
+# Load programmable completion, including APT, before fzf integrations.
+if [[ -z ${BASH_COMPLETION_VERSINFO:-} && -r /usr/share/bash-completion/bash_completion ]]; then
+  # shellcheck source=/dev/null
+  source /usr/share/bash-completion/bash_completion
+fi
 if command -v zoxide &>/dev/null; then
   eval "$(zoxide init bash --cmd cd)"
 fi
