@@ -104,12 +104,10 @@ if status is-interactive
     function tmux
         set -l current_shell (readlink -f "/proc/$fish_pid/exe")
         or return
-        command tmux set-option -g default-shell "$current_shell" >/dev/null 2>&1
-        or true
         if test (count $argv) -eq 0; and not set -q TMUX
-            command tmux new-session
+            command tmux set-option -g default-shell "$current_shell" \; new-session
         else
-            command tmux $argv
+            command tmux set-option -g default-shell "$current_shell" \; $argv
         end
     end
 
