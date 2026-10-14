@@ -74,7 +74,7 @@ fi
 if command -v starship &>/dev/null; then
   eval "$(starship init bash)"
 else
-  PS1='\[\e[36m\]\u@\h\[\e[0m\]:\[\e[34m\]\w\[\e[0m\]\$ '
+  PS1='\[\e[1;36m\][bash]\[\e[0m\] \[\e[36m\]\u@\h\[\e[0m\]:\[\e[34m\]\w\[\e[0m\]\$ '
 fi
 
 if command -v gocomplete &>/dev/null; then

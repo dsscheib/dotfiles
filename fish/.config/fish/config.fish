@@ -95,6 +95,15 @@ if status is-interactive
 
     if type -q starship
         starship init fish | source
+    else
+        function fish_prompt
+            set_color cyan
+            printf '[fish] '
+            set_color blue
+            prompt_pwd
+            set_color normal
+            printf ' ❯ '
+        end
     end
 
     # Use Fish's built-in Go completions, including package/file arguments.

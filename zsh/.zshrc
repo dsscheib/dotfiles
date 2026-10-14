@@ -117,7 +117,7 @@ else
   precmd() { vcs_info; }
   zstyle ':vcs_info:git:*' formats '%F{yellow}(%b)%f '
   setopt PROMPT_SUBST
-  PROMPT='%F{cyan}%n@%m%f:%F{blue}%~%f ${vcs_info_msg_0_}%F{magenta}❯%f '
+  PROMPT='%F{cyan}[zsh]%f %F{cyan}%n@%m%f:%F{blue}%~%f ${vcs_info_msg_0_}%F{magenta}❯%f '
 fi
 
 # ------------------------------------------------------------------------------
