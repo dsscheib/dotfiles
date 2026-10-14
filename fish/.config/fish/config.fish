@@ -6,22 +6,24 @@
 # ------------------------------------------------------------------------------
 # 1. ENVIRONMENT VARIABLES & PATHS
 # ------------------------------------------------------------------------------
-set -gx EDITOR nvim
-set -gx VISUAL nvim
-set -gx PAGER less
-set -gx LANG en_US.UTF-8
-
-if type -q nvim
-    set -gx MANPAGER "nvim +Man!"
-    set -gx MANWIDTH 999
-end
-
-fish_add_path -g $HOME/bin $HOME/.local/bin $HOME/.cargo/bin $HOME/go/bin \
+fish_add_path --path $HOME/bin $HOME/.local/bin $HOME/.cargo/bin $HOME/go/bin \
     /var/lib/flatpak/exports/bin $HOME/.local/share/flatpak/exports/bin /usr/local/bin
 
 if type -q mise
     mise activate fish | source
 end
+
+# Detect editors only after user-local PATH and Mise are initialized. Preserve
+# the inherited locale and any explicit editor/pager preferences.
+set -q PAGER; or set -gx PAGER less
+if type -q nvim
+    set -q EDITOR; or set -gx EDITOR nvim
+    set -q MANPAGER; or set -gx MANPAGER "nvim +Man!"
+    set -q MANWIDTH; or set -gx MANWIDTH 999
+else
+    set -q EDITOR; or set -gx EDITOR vi
+end
+set -q VISUAL; or set -gx VISUAL $EDITOR
 
 if test -d "$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
     set -gx STM32_PRG_PATH "$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
@@ -95,9 +97,7 @@ if status is-interactive
         starship init fish | source
     end
 
-    if type -q gocomplete
-        complete -c go -f -a "(gocomplete (commandline -cp))"
-    end
+    # Use Fish's built-in Go completions, including package/file arguments.
 
     # TMUX ALIASES
     alias tmux-install="~/.local/share/tmux/plugins/tpm/bin/install_plugins"

@@ -12,6 +12,7 @@ typeset -U path
 if command -v mise &>/dev/null; then
   eval "$(mise activate zsh)"
 fi
+setup_editor
 
 # ------------------------------------------------------------------------------
 # 2. ZSH OPTIONS & HISTORY
@@ -48,13 +49,12 @@ autoload -Uz compinit bashcompinit
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "$HOME/.cache/zsh/zcompcache"
 
-# Cache completion dump: only rebuild once every 24 hours. compinit leaves the
-# dump's mtime alone when nothing changed, so touch it to restart the clock.
-[[ -d "$HOME/.cache/zsh" ]] || mkdir -p "$HOME/.cache/zsh"
-if [[ -n ${HOME}/.cache/zsh/zcompdump(#qN.mh+24) ]]; then
-  compinit -d "$HOME/.cache/zsh/zcompdump" && touch "$HOME/.cache/zsh/zcompdump"
+if [[ -r "$HOME/.config/shell/completion.zsh" ]]; then
+  source "$HOME/.config/shell/completion.zsh"
+  dotfiles_init_completion
 else
-  compinit -C -d "$HOME/.cache/zsh/zcompdump"
+  # Keep startup functional between pulling updates and restowing shell files.
+  compinit -i
 fi
 bashcompinit
 
@@ -91,7 +91,7 @@ bindkey -M viins '^?' backward-delete-char
 # ------------------------------------------------------------------------------
 # 5. ZSH-SPECIFIC ALIASES
 # ------------------------------------------------------------------------------
-alias zshconfig="$EDITOR ~/.zshrc"
+alias zshconfig='$EDITOR ~/.zshrc'
 alias reload="source ~/.zshrc && echo 'Zsh configuration reloaded.'"
 
 # ------------------------------------------------------------------------------

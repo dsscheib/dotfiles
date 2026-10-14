@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # ==============================================================================
 # ML4W-INSPIRED BASH CONFIGURATION
 # Save to: ~/.bashrc
@@ -11,11 +12,13 @@ esac
 # ------------------------------------------------------------------------------
 # 1. SHARED ENVIRONMENT, PATHS & ALIASES
 # ------------------------------------------------------------------------------
+# shellcheck source=shell/.config/shell/common.sh
 [ -f "$HOME/.config/shell/common.sh" ] && . "$HOME/.config/shell/common.sh"
 
 if command -v mise &>/dev/null; then
   eval "$(mise activate bash)"
 fi
+setup_editor
 
 # ------------------------------------------------------------------------------
 # 2. BASH OPTIONS & HISTORY
@@ -45,7 +48,7 @@ bind -m vi-command '"j": history-search-forward'
 # ------------------------------------------------------------------------------
 # 4. BASH-SPECIFIC ALIASES
 # ------------------------------------------------------------------------------
-alias bashconfig="$EDITOR ~/.bashrc"
+alias bashconfig='$EDITOR ~/.bashrc'
 alias reload="source ~/.bashrc && echo 'Bash configuration reloaded.'"
 
 # ------------------------------------------------------------------------------
@@ -62,7 +65,9 @@ if command -v zoxide &>/dev/null; then
 fi
 
 if command -v fzf &>/dev/null; then
+  # shellcheck source=/dev/null
   [ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
+  # shellcheck source=/dev/null
   [ -f /usr/share/doc/fzf/examples/completion.bash ] && source /usr/share/doc/fzf/examples/completion.bash
 fi
 

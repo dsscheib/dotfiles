@@ -1,0 +1,10 @@
+bash
+zsh
+shell
+fish
+git
+tmux
+starship
+kitty
+cosmic-term
+fastfetch

@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # ==============================================================================
 # SHARED BASH/ZSH CONFIGURATION
 # Sourced by ~/.bashrc and ~/.zshrc. Fish keeps its own copy in config.fish.
@@ -6,16 +7,6 @@
 # ------------------------------------------------------------------------------
 # 1. ENVIRONMENT VARIABLES & PATHS
 # ------------------------------------------------------------------------------
-export EDITOR="nvim"
-export VISUAL="nvim"
-export PAGER="less"
-export LANG="en_US.UTF-8"
-
-if command -v nvim &>/dev/null; then
-  export MANPAGER="nvim +Man!"
-  export MANWIDTH=999
-fi
-
 # Listed lowest priority first: each entry is prepended, so the last one wins.
 for dir in "/usr/local/bin" "$HOME/.local/share/flatpak/exports/bin" \
   "/var/lib/flatpak/exports/bin" "$HOME/go/bin" "$HOME/.cargo/bin" \
@@ -25,6 +16,20 @@ for dir in "/usr/local/bin" "$HOME/.local/share/flatpak/exports/bin" \
   fi
 done
 unset dir
+
+# Called after Mise activation so user-local and managed tools are visible.
+setup_editor() {
+  export PAGER="${PAGER:-less}"
+  if command -v nvim &>/dev/null; then
+    export EDITOR="${EDITOR:-nvim}"
+    export VISUAL="${VISUAL:-${EDITOR}}"
+    export MANPAGER="${MANPAGER:-nvim +Man!}" MANWIDTH="${MANWIDTH:-999}"
+    alias vim=nvim
+  else
+    export EDITOR="${EDITOR:-vi}"
+    export VISUAL="${VISUAL:-${EDITOR}}"
+  fi
+}
 
 if [[ -d "$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin" ]]; then
   export STM32_PRG_PATH="$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
@@ -65,7 +70,6 @@ alias mv="mv -i"
 alias rm="rm -i"
 
 alias sudo="sudo "
-alias vim=nvim
 
 # TMUX ALIASES
 alias tmux-install="~/.local/share/tmux/plugins/tpm/bin/install_plugins"
