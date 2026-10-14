@@ -1,4 +1,4 @@
 {
-    (modifiers: [Ctrl, Shift], key: "|"): PaneSplitVertical,
-    (modifiers: [Ctrl, Shift], key: "_"): PaneSplitHorizontal,
+    (modifiers: [Ctrl, Shift], key: "\\"): PaneSplitVertical,
+    (modifiers: [Ctrl, Shift], key: "-"): PaneSplitHorizontal,
 }
