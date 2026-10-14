@@ -82,9 +82,9 @@ Plugin installation failures stop bootstrap with an explicit error; deployed
 configuration and backups remain available.
 
 The Bash/Zsh shared config and Fish config update tmux's `default-shell` to the
-calling shell whenever the `tmux` command is used. New panes use that shell even
-when connecting to an existing server; already-running panes keep their current
-shell.
+calling shell whenever the `tmux` command is used. A bare `tmux` command outside
+tmux creates a fresh session, so it uses the current shell even when a server is
+already running. Explicit commands such as `tmux attach` keep their usual behavior.
 
 Plugin repositories configured in `tmux.conf` follow their upstream branches.
 They are not immutable pins: TPM updates may change their behavior. Review those

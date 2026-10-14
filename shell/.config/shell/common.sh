@@ -77,7 +77,11 @@ tmux() {
   local current_shell
   current_shell=$(readlink -f "/proc/$$/exe") || return
   command tmux set-option -g default-shell "$current_shell" >/dev/null 2>&1 || true
-  command tmux "$@"
+  if [[ $# -eq 0 && -z ${TMUX:-} ]]; then
+    command tmux new-session
+  else
+    command tmux "$@"
+  fi
 }
 
 # TMUX ALIASES

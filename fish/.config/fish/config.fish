@@ -106,7 +106,11 @@ if status is-interactive
         or return
         command tmux set-option -g default-shell "$current_shell" >/dev/null 2>&1
         or true
-        command tmux $argv
+        if test (count $argv) -eq 0; and not set -q TMUX
+            command tmux new-session
+        else
+            command tmux $argv
+        end
     end
 
     # TMUX ALIASES
