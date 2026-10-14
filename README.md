@@ -81,6 +81,11 @@ TPM checkouts must have an approved upstream origin and no local modifications.
 Plugin installation failures stop bootstrap with an explicit error; deployed
 configuration and backups remain available.
 
+The Bash/Zsh shared config and Fish config update tmux's `default-shell` to the
+calling shell whenever the `tmux` command is used. New panes use that shell even
+when connecting to an existing server; already-running panes keep their current
+shell.
+
 Plugin repositories configured in `tmux.conf` follow their upstream branches.
 They are not immutable pins: TPM updates may change their behavior. Review those
 updates before relying on a particular configuration.

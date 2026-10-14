@@ -99,6 +99,16 @@ if status is-interactive
 
     # Use Fish's built-in Go completions, including package/file arguments.
 
+    # Keep new tmux panes on the shell invoking the client, including when
+    # connecting to an already-running server.
+    function tmux
+        set -l current_shell (readlink -f "/proc/$fish_pid/exe")
+        or return
+        command tmux set-option -g default-shell "$current_shell" >/dev/null 2>&1
+        or true
+        command tmux $argv
+    end
+
     # TMUX ALIASES
     alias tmux-install="~/.local/share/tmux/plugins/tpm/bin/install_plugins"
     alias tmux-update="~/.local/share/tmux/plugins/tpm/bin/update_plugins all"

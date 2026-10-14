@@ -71,6 +71,15 @@ alias rm="rm -i"
 
 alias sudo="sudo "
 
+# Synchronize tmux's default shell with the shell invoking the client. This
+# updates an already-running server so new panes use the current shell.
+tmux() {
+  local current_shell
+  current_shell=$(readlink -f "/proc/$$/exe") || return
+  command tmux set-option -g default-shell "$current_shell" >/dev/null 2>&1 || true
+  command tmux "$@"
+}
+
 # TMUX ALIASES
 alias tmux-install="~/.local/share/tmux/plugins/tpm/bin/install_plugins"
 alias tmux-update="~/.local/share/tmux/plugins/tpm/bin/update_plugins all"
