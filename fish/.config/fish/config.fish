@@ -3,38 +3,31 @@
 # Save to: ~/.config/fish/config.fish
 # ==============================================================================
 
-if status is-interactive
+# ------------------------------------------------------------------------------
+# 1. ENVIRONMENT VARIABLES & PATHS
+# ------------------------------------------------------------------------------
+set -gx EDITOR nvim
+set -gx VISUAL nvim
+set -gx PAGER less
+set -gx LANG en_US.UTF-8
 
-    # --------------------------------------------------------------------------
-    # 1. ENVIRONMENT VARIABLES & PATHS
-    # --------------------------------------------------------------------------
-    set -gx EDITOR nvim
-    set -gx VISUAL nvim
-    set -gx PAGER less
-    set -gx LANG en_US.UTF-8
+if type -q nvim
+    set -gx MANPAGER "nvim +Man!"
+    set -gx MANWIDTH 999
+end
 
-    if type -q nvim
-        set -gx MANPAGER "nvim +Man!"
-        set -gx MANWIDTH 999
-    end
+fish_add_path -g $HOME/bin $HOME/.local/bin $HOME/.cargo/bin $HOME/go/bin \
+    /var/lib/flatpak/exports/bin $HOME/.local/share/flatpak/exports/bin /usr/local/bin
 
-    fish_add_path -g $HOME/bin
-    fish_add_path -g $HOME/.local/bin
-    fish_add_path -g $HOME/.cargo/bin
-    fish_add_path -g $HOME/go/bin
-    fish_add_path -g /var/lib/flatpak/exports/bin
-    fish_add_path -g $HOME/.local/share/flatpak/exports/bin
-    fish_add_path -g /usr/local/bin
-
+if type -q mise
     mise activate fish | source
+end
 
-    if test -s "$HOME/.cargo/env.fish"
-        source "$HOME/.cargo/env.fish"
-    end
+if test -d "$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
+    set -gx STM32_PRG_PATH "$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
+end
 
-    if test -d "$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
-        set -gx STM32_PRG_PATH "$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
-    end
+if status is-interactive
 
     set -g fish_greeting
 
@@ -72,15 +65,12 @@ if status is-interactive
         alias cat="batcat --style=plain"
     end
 
-    if type -q rg
-        alias grep="rg"
-    else
-        alias grep="grep --color=auto"
-    end
+    alias grep="grep --color=auto"
 
     alias fishconfig="$EDITOR ~/.config/fish/config.fish"
     alias reload="source ~/.config/fish/config.fish; and echo 'Fish configuration reloaded.'"
 
+    # Pop!_OS / Debian (apt + flatpak) only
     alias update="sudo apt update && sudo apt upgrade -y && flatpak update -y"
     alias cleanup="sudo apt autoremove -y && sudo apt autoclean && flatpak uninstall --unused -y"
 

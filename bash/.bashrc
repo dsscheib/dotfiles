@@ -9,32 +9,12 @@ case $- in
 esac
 
 # ------------------------------------------------------------------------------
-# 1. ENVIRONMENT VARIABLES & PATHS
+# 1. SHARED ENVIRONMENT, PATHS & ALIASES
 # ------------------------------------------------------------------------------
-export EDITOR="nvim"
-export VISUAL="nvim"
-export PAGER="less"
-export LANG="en_US.UTF-8"
+[ -f "$HOME/.config/shell/common.sh" ] && . "$HOME/.config/shell/common.sh"
 
-if command -v nvim &>/dev/null; then
-  export MANPAGER="nvim +Man!"
-  export MANWIDTH=999
-fi
-
-for dir in "$HOME/bin" "$HOME/.local/bin" "$HOME/.cargo/bin" "$HOME/go/bin" \
-  "/var/lib/flatpak/exports/bin" "$HOME/.local/share/flatpak/exports/bin" \
-  "/usr/local/bin"; do
-  if [[ -d "$dir" && ":$PATH:" != *":$dir:"* ]]; then
-    export PATH="$dir:$PATH"
-  fi
-done
-
-eval "$(mise activate bash)"
-
-[ -s "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
-
-if [[ -d "$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin" ]]; then
-  export STM32_PRG_PATH="$HOME/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
+if command -v mise &>/dev/null; then
+  eval "$(mise activate bash)"
 fi
 
 # ------------------------------------------------------------------------------
@@ -63,47 +43,10 @@ bind -m vi-command '"k": history-search-backward'
 bind -m vi-command '"j": history-search-forward'
 
 # ------------------------------------------------------------------------------
-# 4. ALIASES & UTILITIES
+# 4. BASH-SPECIFIC ALIASES
 # ------------------------------------------------------------------------------
-alias ..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../../"
-
-if command -v eza &>/dev/null; then
-  alias ls="eza --icons --group-directories-first"
-  alias ll="eza -lh --icons --group-directories-first"
-  alias la="eza -lah --icons --group-directories-first"
-  alias tree="eza --tree --icons"
-else
-  alias ls="ls --color=auto"
-  alias ll="ls -lh --color=auto"
-  alias la="ls -lah --color=auto"
-fi
-
-if command -v bat &>/dev/null; then
-  alias cat="bat --style=plain"
-elif command -v batcat &>/dev/null; then
-  alias cat="batcat --style=plain"
-fi
-
-if command -v rg &>/dev/null; then
-  alias grep="rg"
-else
-  alias grep="grep --color=auto"
-fi
-
 alias bashconfig="$EDITOR ~/.bashrc"
 alias reload="source ~/.bashrc && echo 'Bash configuration reloaded.'"
-
-alias update="sudo apt update && sudo apt upgrade -y && flatpak update -y"
-alias cleanup="sudo apt autoremove -y && sudo apt autoclean && flatpak uninstall --unused -y"
-
-alias cp="cp -i"
-alias mv="mv -i"
-alias rm="rm -i"
-
-alias sudo="sudo "
-alias vim=nvim
 
 # ------------------------------------------------------------------------------
 # 5. EXTERNAL INTEGRATIONS
@@ -115,7 +58,6 @@ fi
 if command -v fzf &>/dev/null; then
   [ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
   [ -f /usr/share/doc/fzf/examples/completion.bash ] && source /usr/share/doc/fzf/examples/completion.bash
-  export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --color=header:italic"
 fi
 
 if command -v starship &>/dev/null; then
@@ -128,18 +70,7 @@ if command -v gocomplete &>/dev/null; then
   complete -o nospace -C gocomplete go
 fi
 
-# TMUX ALIASES
-alias tmux-install="~/.local/share/tmux/plugins/tpm/bin/install_plugins"
-alias tmux-update="~/.local/share/tmux/plugins/tpm/bin/update_plugins all"
-alias tmux-clean="~/.local/share/tmux/plugins/tpm/bin/clean_plugins"
-
 # ------------------------------------------------------------------------------
 # 6. WELCOME BANNER
 # ------------------------------------------------------------------------------
-if [[ -z "${TMUX:-}" && -z "${NVIM:-}" ]]; then
-  if command -v fastfetch &>/dev/null; then
-    fastfetch
-  elif command -v neofetch &>/dev/null; then
-    neofetch
-  fi
-fi
+show_banner

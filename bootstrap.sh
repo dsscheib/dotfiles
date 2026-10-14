@@ -10,9 +10,6 @@ set -euo pipefail
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKUP_DIR="${HOME}/.dotfiles_backup/$(date +%Y%m%d_%H%M%S)"
 
-# List of stow packages (directories in ~/.dotfiles) to ignore
-EXCLUDE_DIRS=(".git" ".github" "docs")
-
 log_info() { echo -e "\033[0;34m[INFO]\033[0m $1"; }
 log_warn() { echo -e "\033[0;33m[WARN]\033[0m $1"; }
 log_error() { echo -e "\033[0;31m[ERROR]\033[0m $1"; }
@@ -49,32 +46,24 @@ install_stow() {
 # ------------------------------------------------------------------------------
 backup_conflicts() {
   log_info "Checking for conflicting target files..."
-
-  # Dry-run stow to discover existing files that would cause a collision
   cd "${DOTFILES_DIR}"
 
+  # Packages are stowed with --no-folding, so every file in a package maps to
+  # one target path. Anything already there that isn't a symlink is a conflict.
   for pkg in */; do
     pkg="${pkg%/}"
 
-    # Skip excluded non-package directories
-    if [[ " ${EXCLUDE_DIRS[*]} " =~ " ${pkg} " ]]; then
-      continue
-    fi
-
-    # Run stow simulation and parse conflict messages
-    conflicts=$(stow -n -v "${pkg}" 2>&1 | grep "existing target is neither a link nor a directory" | awk '{print $NF}' || true)
-
-    if [[ -n "${conflicts}" ]]; then
-      mkdir -p "${BACKUP_DIR}"
-      while IFS= read -r file; do
-        target="${HOME}/${file}"
-        if [[ -f "${target}" || -d "${target}" ]]; then
-          log_warn "Backing up conflicting file: ${target} -> ${BACKUP_DIR}/"
-          mkdir -p "$(dirname "${BACKUP_DIR}/${file}")"
-          mv "${target}" "${BACKUP_DIR}/${file}"
-        fi
-      done <<<"${conflicts}"
-    fi
+    while IFS= read -r -d '' src; do
+      rel="${src#"${pkg}"/}"
+      target="${HOME}/${rel}"
+      # -ef skips targets that already resolve into this repo through a
+      # folded directory symlink left by an older stow run.
+      if [[ -e "${target}" && ! -L "${target}" && ! "${target}" -ef "${src}" ]]; then
+        log_warn "Backing up conflicting file: ${target} -> ${BACKUP_DIR}/"
+        mkdir -p "$(dirname "${BACKUP_DIR}/${rel}")"
+        mv "${target}" "${BACKUP_DIR}/${rel}"
+      fi
+    done < <(find "${pkg}" \( -type f -o -type l \) -print0)
   done
 }
 
@@ -87,18 +76,13 @@ stow_packages() {
 
   for pkg in */; do
     pkg="${pkg%/}"
-
-    if [[ " ${EXCLUDE_DIRS[*]} " =~ " ${pkg} " ]]; then
-      continue
-    fi
-
     log_info "Restowing package: ${pkg}"
     stow -R "${pkg}"
   done
 }
 
 # ------------------------------------------------------------------------------
-# AUTOMATE TMUX & TPM SETUP
+# 4. AUTOMATE TMUX & TPM SETUP
 # ------------------------------------------------------------------------------
 setup_tmux() {
   local tpm_dir="${HOME}/.local/share/tmux/plugins/tpm"

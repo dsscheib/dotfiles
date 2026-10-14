@@ -26,17 +26,6 @@
 	autocrlf = input
 	excludesfile = ~/.config/git/ignore
 
-[credential]
-	credentialStore = gpg
-	helper = 
-	helper = /usr/local/bin/git-credential-manager
-
-[credential "https://github.com"]
-	username = dsscheib
-
-[credential "https://dev.azure.com"]
-	useHttpPath = true
-
-# Local machine or secret overrides (optional)
+# Machine-specific settings (credential helpers, work email, ...)
 [include]
 	path = ~/.gitconfig.local

@@ -1,0 +1,4 @@
+({
+    (modifiers: [Ctrl, Shift], key: Character("|")): PaneSplitVertical,
+    (modifiers: [Ctrl, Shift], key: Character("_")): PaneSplitHorizontal,
+})
