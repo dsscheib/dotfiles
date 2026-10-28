@@ -118,8 +118,16 @@ sudo apt-get install shellcheck stow python3 zsh fish bash-completion
 bash scripts/check.sh
 ```
 
-Checks cover syntax, ShellCheck, deployment into temporary homes, backup recovery,
-completion behavior, editor detection, TPM validation, and cache permission
-handling. CI runs on Ubuntu 22.04 and 24.04. Checks never run plugin installers or
-deploy into your actual home directory. Graphical settings and third-party tmux
+Checks cover a secret scan, syntax, ShellCheck, deployment into temporary homes,
+backup recovery, completion behavior, editor detection, TPM validation, and cache
+permission handling. CI runs on Ubuntu 22.04 and 24.04. Checks never run plugin installers or
+deploy into your actual home directory.
+
+This repository is public. `scripts/secret_scan.py` fails the checks if a tracked
+file contains a private key, token, API key, assigned password or secret, a URL
+with embedded credentials, a private IP address or a Tailscale hostname, or is a
+`.env`, credential-store or key file. It reports the file and line, never the
+value. Mark a deliberate false positive with `secret-scan: allow` on that line.
+Keep host- and project-specific agent configuration in the private
+`dotfiles-private` repository instead. Graphical settings and third-party tmux
 plugins still need testing in your desktop session.

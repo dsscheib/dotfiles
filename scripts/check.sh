@@ -13,6 +13,7 @@ bash -n shell/.config/shell/common.sh
 zsh -n zsh/.zshrc
 zsh -n shell/.config/shell/completion.zsh
 fish --no-execute fish/.config/fish/config.fish
+python3 -B scripts/secret_scan.py
 python3 -B -m unittest discover -s tests -v
 python3 -B - <<'PY'
 import ast

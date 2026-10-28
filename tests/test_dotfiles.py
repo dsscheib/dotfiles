@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
 import unittest
@@ -14,6 +15,63 @@ REPO = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('stow_safe', REPO / 'scripts/stow_safe.py')
 safe = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(safe)
+scan_spec = importlib.util.spec_from_file_location('secret_scan', REPO / 'scripts/secret_scan.py')
+secret_scan = importlib.util.module_from_spec(scan_spec)
+scan_spec.loader.exec_module(secret_scan)
+
+# Fake values are assembled at runtime so this file never contains a literal match.
+FAKE = {
+    'private key': '-----BEGIN ' + 'OPENSSH PRIVATE KEY-----',
+    'GitHub token': 'gh' + 'p_' + 'A1b2' * 9,
+    'API secret key': 's' + 'k-' + 'proj' + 'x9' * 12,
+    'AWS access key': 'AK' + 'IA' + 'ABCDEFGHIJKLMNOP',
+    'Google API key': 'AI' + 'za' + 'S' * 35,
+    'Slack token': 'xo' + 'xb-' + '1234567890-abc',
+    'assigned secret': 'API_' + 'KEY=' + 'q7' * 10,
+    'URL with credentials': 'https://user:' + 'hunter2' + '@example.com/repo.git',
+    'private IPv4 address': '192.' + '168.1.20',
+    'Tailscale hostname': 'nas.tail' + 'abc.ts' + '.net',
+}
+
+
+class SecretScanTests(unittest.TestCase):
+    def test_each_pattern_is_detected(self):
+        for kind, value in FAKE.items():
+            with self.subTest(kind=kind):
+                self.assertIn(('f', 1, kind), secret_scan.scan_text('f', f'x {value}\n'))
+
+    def test_ordinary_config_is_not_flagged(self):
+        text = ('export PATH="$HOME/.local/bin:$PATH"\nhelper = /usr/local/bin/git-credential-manager\n'
+                'email = someone@example.com\nlisten 127.0.0.1:8080\ntoken = ""\n')
+        self.assertEqual(secret_scan.scan_text('common.sh', text), [])
+
+    def test_allow_marker_suppresses_a_line(self):
+        line = f'{FAKE["private IPv4 address"]}  # documented example; secret-scan: allow\n'
+        self.assertEqual(secret_scan.scan_text('README.md', line), [])
+
+    def test_sensitive_filenames_are_flagged(self):
+        for name in ('.env', 'app/.env.local', '.git-credentials', '.ssh/id_ed25519', 'certs/server.key'):
+            with self.subTest(name=name):
+                self.assertTrue(secret_scan.scan_text(name, ''))
+
+    def test_only_tracked_text_files_are_scanned_and_values_are_never_printed(self):
+        with tempfile.TemporaryDirectory(prefix='secret-scan-') as directory:
+            repo = Path(directory)
+            subprocess.run(['git', 'init', '-q'], cwd=repo, check=True)
+            (repo / 'tracked.conf').write_text(f'token: {FAKE["GitHub token"]}\n')
+            (repo / 'binary.dat').write_bytes(b'\0' + FAKE['AWS access key'].encode())
+            (repo / 'untracked.conf').write_text(FAKE['private key'] + '\n')
+            subprocess.run(['git', 'add', 'tracked.conf', 'binary.dat'], cwd=repo, check=True)
+            kinds = {(name, kind) for name, _, kind in secret_scan.scan_repository(repo)}
+            self.assertEqual(kinds, {('tracked.conf', 'GitHub token'), ('tracked.conf', 'assigned secret')})
+            result = subprocess.run([sys.executable, '-B', str(REPO / 'scripts/secret_scan.py'), str(repo)],
+                                    text=True, capture_output=True)
+            self.assertEqual(result.returncode, 1)
+            self.assertIn('tracked.conf:1', result.stderr)
+            self.assertNotIn(FAKE['GitHub token'], result.stderr + result.stdout)
+
+    def test_repository_is_clean(self):
+        self.assertEqual(secret_scan.scan_repository(REPO), [])
 
 
 class DotfilesTests(unittest.TestCase):
