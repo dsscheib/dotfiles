@@ -357,7 +357,7 @@ git() {
   case "$1" in
     remote) printf '%s' "$FIXTURE_ORIGIN";;
     status) printf '%s' "$FIXTURE_DIRTY";;
-    cat-file|checkout) return 0;;
+    fetch|checkout) return 0;;
     *) return 99;;
   esac
 }

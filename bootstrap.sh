@@ -2,8 +2,6 @@
 # Deploy the declared Stow packages as the desktop user.
 set -euo pipefail
 DOTFILES_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-# shellcheck source=resources/tpm.env
-source "$DOTFILES_DIR/resources/tpm.env"
 
 log_info() { printf '[INFO] %s\n' "$*"; }
 log_warn() { printf '[WARN] %s\n' "$*" >&2; }
@@ -35,28 +33,27 @@ setup_tmux() {
   export TMUX_PLUGIN_MANAGER_PATH="$HOME/.local/share/tmux/plugins"
   local tpm_dir="$TMUX_PLUGIN_MANAGER_PATH/tpm" origin temporary
   if [[ -e $tpm_dir || -L $tpm_dir ]]; then
-    [[ ! -L $tpm_dir && -d $tpm_dir/.git ]] || { log_error "TPM path is not a regular Git checkout: $tpm_dir"; return 1; }
+    [[ -d $tpm_dir/.git ]] || { log_error "TPM path is not a regular Git checkout: $tpm_dir"; return 1; }
     origin=$(git -C "$tpm_dir" remote get-url origin)
     case ${origin%.git} in
       https://github.com/tmux-plugins/tpm|git@github.com:tmux-plugins/tpm) ;;
       *) log_error "Unexpected TPM origin: $origin"; return 1 ;;
     esac
     [[ -z $(git -C "$tpm_dir" status --porcelain) ]] || { log_error "TPM has local changes: $tpm_dir"; return 1; }
-    if ! git -C "$tpm_dir" cat-file -e "$TPM_COMMIT^{commit}"; then git -C "$tpm_dir" fetch origin "$TPM_COMMIT"; fi
-    git -C "$tpm_dir" checkout --detach "$TPM_COMMIT"
+    git -C "$tpm_dir" fetch --quiet origin HEAD
+    git -C "$tpm_dir" checkout --quiet --detach FETCH_HEAD
   else
     mkdir -p "$TMUX_PLUGIN_MANAGER_PATH"
     temporary=$(mktemp -d "$TMUX_PLUGIN_MANAGER_PATH/.tpm.XXXXXX")
-    if git clone --no-checkout https://github.com/tmux-plugins/tpm "$temporary" &&
-       git -C "$temporary" checkout --detach "$TPM_COMMIT"; then
+    if git clone --quiet --depth 1 https://github.com/tmux-plugins/tpm "$temporary"; then
       mv -T -- "$temporary" "$tpm_dir"
     else
       rm -rf -- "$temporary"
-      log_error 'Could not install the pinned TPM revision.'
+      log_error 'Could not clone TPM.'
       return 1
     fi
   fi
-  log_info "Installing tmux plugins with TPM $TPM_COMMIT..."
+  log_info "Installing tmux plugins with the latest TPM..."
   if "$tpm_dir/bin/install_plugins"; then return; fi
   log_error 'Tmux plugin installation failed. Dotfiles are deployed; resolve the error and rerun bootstrap.'
   return 1

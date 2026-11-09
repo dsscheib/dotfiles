@@ -76,8 +76,8 @@ scaling differ between applications, so adjust either in its settings as needed.
 ## Tmux plugins
 
 Both this repo and workstation setup use `~/.local/share/tmux/plugins`.
-TPM is pinned in `resources/tpm.env`, matching workstation setup's pin. Existing
-TPM checkouts must have an approved upstream origin and no local modifications.
+Bootstrap installs the latest upstream TPM and updates an existing checkout to
+it. Existing TPM checkouts (a symlink to one is accepted) must have an approved upstream origin and no local modifications.
 Plugin installation failures stop bootstrap with an explicit error; deployed
 configuration and backups remain available.
 
