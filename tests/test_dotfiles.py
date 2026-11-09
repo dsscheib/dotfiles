@@ -1,6 +1,7 @@
 """Temporary-home regressions; never deploy or install plugins in the real HOME."""
 import importlib.util
 import fcntl
+import io
 import os
 from pathlib import Path
 import shutil
@@ -165,6 +166,15 @@ class DotfilesTests(unittest.TestCase):
             with self.assertRaises(subprocess.CalledProcessError):
                 safe.deploy(self.repo, self.home, ['bash'])
         self.assertEqual((self.home / '.bashrc').read_text(), 'original')
+
+    def test_absolute_home_links_produce_no_stow_noise(self):
+        self.package('bash', '.bashrc')
+        (self.home / '.linked').symlink_to(self.repo)
+        safe.deploy(self.repo, self.home, ['bash'])
+        with patch.object(safe.sys, 'stderr', new_callable=io.StringIO) as stderr:
+            safe.deploy(self.repo, self.home, ['bash'])
+        self.assertNotIn('find_stowed_path', stderr.getvalue())
+        self.assertIn('simulation mode', stderr.getvalue())
 
     def test_move_failure_restores_prior_backups(self):
         self.package('bash', '.bashrc')
