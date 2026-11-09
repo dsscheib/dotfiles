@@ -75,6 +75,20 @@ def plan(repo, home, packages):
     return conflicts
 
 
+# GNU Stow 2.3 prints this for every absolute symlink in a directory it scans
+# (for example ~/.dotfiles when the checkout is published as a versioned link),
+# though it ignores those links. Stow 2.4 no longer reports them.
+STOW_ABSOLUTE_LINK_NOISE = re.compile(r'BUG in find_stowed_path\? Absolute/relative mismatch ')
+
+
+def run_stow(command, repo):
+    result = subprocess.run(command, cwd=repo, stderr=subprocess.PIPE, text=True)
+    sys.stderr.writelines(line for line in result.stderr.splitlines(keepends=True)
+                          if not STOW_ABSOLUTE_LINK_NOISE.match(line))
+    if result.returncode:
+        raise subprocess.CalledProcessError(result.returncode, command)
+
+
 def restore(home, backup, moved):
     for relative in reversed(moved):
         target = home / relative
@@ -118,14 +132,14 @@ def deploy(repo, home, packages):
                     raise DeploymentError(f'Refusing to replace backup: {destination}')
                 shutil.move(str(home / relative), str(destination))
                 moved.append(relative)
-            subprocess.run([*command, '--simulate'], cwd=repo, check=True)
+            run_stow([*command, '--simulate'], repo)
         except (OSError, subprocess.CalledProcessError, DeploymentError):
             if backup:
                 restore(home, backup, moved)
             raise
         # A real Stow failure may leave new links. Retain backups for inspection,
         # rather than overwriting those links with an automatic rollback.
-        subprocess.run(command, cwd=repo, check=True)
+        run_stow(command, repo)
         return backup
 
 
