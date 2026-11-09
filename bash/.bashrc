@@ -82,6 +82,7 @@ if command -v gocomplete &>/dev/null; then
 fi
 
 # Machine-specific settings (installer additions, extra PATHs, ...)
+# shellcheck source=/dev/null
 [ -f "$HOME/.bashrc.local" ] && . "$HOME/.bashrc.local"
 
 # ------------------------------------------------------------------------------
