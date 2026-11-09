@@ -81,6 +81,9 @@ if command -v gocomplete &>/dev/null; then
   complete -o nospace -C gocomplete go
 fi
 
+# Machine-specific settings (installer additions, extra PATHs, ...)
+[ -f "$HOME/.bashrc.local" ] && . "$HOME/.bashrc.local"
+
 # ------------------------------------------------------------------------------
 # 6. WELCOME BANNER
 # ------------------------------------------------------------------------------
