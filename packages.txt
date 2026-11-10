@@ -4,6 +4,7 @@ shell
 fish
 git
 tmux
+herdr
 starship
 kitty
 cosmic-term

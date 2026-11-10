@@ -43,6 +43,7 @@ so configuration files such as `.gitconfig` are included.
 | fish | `~/.config/fish/config.fish` |
 | git | `~/.gitconfig`, `~/.config/git/ignore` |
 | tmux | `~/.config/tmux/tmux.conf` |
+| herdr | `~/.config/herdr/config.toml` |
 | starship | `~/.config/starship.toml` |
 | kitty | `~/.config/kitty/kitty.conf` |
 | cosmic-term | `~/.config/cosmic/com.system76.CosmicTerm/v1/*` |
@@ -72,6 +73,14 @@ its version-specific cache for about a day, and ignores insecure directories.
 
 COSMIC Terminal uses size 18; Kitty uses 14 points. Font metrics and display
 scaling differ between applications, so adjust either in its settings as needed.
+
+## Herdr
+
+`~/.config/herdr/config.toml` mirrors the tmux keybindings: `Ctrl-Space`
+prefix, `|`/`-` splits, `h`/`j`/`k`/`l` focus, `H`/`J`/`K`/`L` resize,
+`r` reload, `d` detach, `q` sends Shift-Left for Codex, Alt-arrow pane focus, and
+Shift-arrow or Alt-Shift-h/l tab switching. Resize mode moves to `prefix R`. The
+`q` command uses `jq`. Validate edits with `herdr config check`.
 
 ## Tmux plugins
 

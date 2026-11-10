@@ -1,0 +1,58 @@
+# herdr configuration, mirroring ~/.config/tmux/tmux.conf.
+# Unlisted settings keep herdr's defaults; see `herdr --default-config`.
+# Validate with `herdr config check`; apply with `prefix r` or
+# `herdr server reload-config`.
+
+[theme]
+name = "tokyo-night"
+
+[terminal]
+# New panes and tabs start in the current pane's directory (pane_current_path).
+new_cwd = "follow"
+
+[keys]
+# Prefix key (C-Space)
+prefix = "ctrl+space"
+
+# Config reload
+reload_config = "prefix+r"
+# prefix r is taken by the reload, so resize mode moves to shift+r.
+resize_mode = "prefix+shift+r"
+
+# tmux's default detach key; prefix q is the Codex command below.
+detach = "prefix+d"
+
+# Intuitive pane splitting: | side by side, - stacked.
+split_vertical = "prefix+|"
+split_horizontal = "prefix+minus"
+new_tab = "prefix+c"
+
+# Vim-style pane selection, plus Alt-arrow without the prefix.
+focus_pane_left = ["prefix+h", "alt+left"]
+focus_pane_down = ["prefix+j", "alt+down"]
+focus_pane_up = ["prefix+k", "alt+up"]
+focus_pane_right = ["prefix+l", "alt+right"]
+
+# Fast pane resizing (tmux bind -r H/J/K/L).
+resize_pane_left = "prefix+shift+h"
+resize_pane_down = "prefix+shift+j"
+resize_pane_up = "prefix+shift+k"
+resize_pane_right = "prefix+shift+l"
+
+# Window (tab) navigation: Shift-arrow and Alt-Shift-h/l without the prefix.
+previous_tab = ["prefix+p", "shift+left", "alt+shift+h"]
+next_tab = ["prefix+n", "shift+right", "alt+shift+l"]
+# Windows are numbered from 1, as with base-index 1.
+switch_tab = "prefix+1..9"
+
+# Open Codex pending questions without changing Shift-Left tab navigation:
+# send Shift-Left to the focused pane.
+[[keys.command]]
+key = "prefix+q"
+type = "shell"
+command = "herdr pane send-keys \"$(herdr pane current | jq -r '.result.pane.pane_id')\" shift+left"
+description = "Send Shift-Left (Codex pending questions)"
+
+[ui]
+# tmux creates windows immediately, without asking for a name.
+prompt_new_tab_name = false
