@@ -46,6 +46,11 @@ next_tab = ["prefix+n", "shift+right", "alt+shift+l"]
 # Windows are numbered from 1, as with base-index 1.
 switch_tab = "prefix+1..9"
 
+# Workspace navigation: Shift-up/down and Alt-Shift-k/j without the prefix.
+previous_workspace = ["shift+up", "alt+shift+k"]
+next_workspace = ["shift+down", "alt+shift+j"]
+switch_workspace = "prefix+shift+1..9"
+
 # Open Codex pending questions without changing Shift-Left tab navigation:
 # send Shift-Left to the focused pane.
 [[keys.command]]
